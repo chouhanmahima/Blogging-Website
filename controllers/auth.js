@@ -14,7 +14,7 @@ const signup = async (req, res) => {
     const passwordHash = bcrypt.hashSync("12345", salt);
     console.log(passwordHash);
 
-    const newUser = new UserModel({ ...req.body, password: passwordHash });
+    const newUser = new UserModel({ ...req.body, role: "USER", password: passwordHash });
     const newlyInsertedUser = await newUser.save();
     console.log(newlyInsertedUser._id);
     res.json({

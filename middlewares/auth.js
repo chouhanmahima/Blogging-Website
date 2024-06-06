@@ -6,9 +6,10 @@ const jwtSecretKey = "MY_JWT_SECRET_KAY1234";
 
 const validateUser = async (req, res, next) => {
     const headers = req.headers;
+    const tokenFromHeaders = headers.authorization.split(" ")[1];
 
   // 1. token should be present
-  if (!headers.authorization) {
+  if (!tokenFromHeaders) {
     return res.status(401).json({
       msg: "Unauthenticated user",
     });
@@ -16,14 +17,14 @@ const validateUser = async (req, res, next) => {
 
   // 2. secret key validation (this is the same token that we have generated)
   try {
-    jwt.verify(headers.authorization, jwtSecretKey);
+    jwt.verify(tokenFromHeaders, jwtSecretKey);
   } catch (err) {
     return res.status(401).json({
       msg: "Unauthenticated user",
     });
   }
   // 3. token expiry date should not be passed
-  const tokenData = jwt.decode(headers.authorization);
+  const tokenData = jwt.decode(tokenFromHeaders);
   console.log(tokenData);
 
   const tokenExp = tokenData.exp;
@@ -43,6 +44,7 @@ const validateUser = async (req, res, next) => {
       msg: "Unauthenticated user",
     });
   }
+  req.user = user;
   next();
 }
 

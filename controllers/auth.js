@@ -25,36 +25,43 @@ const signup = async (req, res) => {
     });
 };
 const login = async (req, res) => {
-    const user = await UserModel.findOne({ email: req.body.email });
-    // console.log(user);
-    if(!user){
-        return res.json({
-            message: "User not found, please register first",
-        });
+    try{
+        const user = await UserModel.findOne({ email: req.body.email });
+        // console.log(user);
+        if(!user){
+            return res.json({
+                message: "User not found, please register first",
+            });
+        }
+    
+        const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
+        //   console.log(isPasswordValid);
+    
+        const tokenExpiry = ( new Date().getTime() / 1_000 ) + 3600 // 1hr validity
+        const payload = {
+            userId: user._id,
+            name: user.name,
+            exp: tokenExpiry,
+          };
+    
+          const token = jwt.sign(payload, jwtSecretKey);
+    
+        if(!isPasswordValid){
+            // generate jwt
+            return res.json({
+                token,
+             });
+         }
+    
+        res.json({
+            message: "Incorrect username or password"
+        })
+    } catch (error){
+        res.status(500).json({
+            success: false,
+            message: "Error occurred !",
+          });
     }
-
-    const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
-    //   console.log(isPasswordValid);
-
-    const tokenExpiry = ( new Date().getTime() / 1_000 ) + 3600 // 1hr validity
-    const payload = {
-        userId: user._id,
-        name: user.name,
-        exp: tokenExpiry,
-      };
-
-      const token = jwt.sign(payload, jwtSecretKey);
-
-    if(!isPasswordValid){
-        // generate jwt
-        return res.json({
-            token,
-         });
-     }
-
-    res.json({
-        message: "Incorrect username or password"
-    })
 };
 
 const authController = {

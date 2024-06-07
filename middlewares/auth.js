@@ -1,8 +1,11 @@
 const jwt = require("jsonwebtoken");
 
 const UserModel = require("../models/auth");
+const dotenv = require("dotenv");
 
-const jwtSecretKey = "MY_JWT_SECRET_KAY1234";
+dotenv.config();
+
+const jwtSecretKey = process.env.SECRET_KEY;
 
 const validateUser = async (req, res, next) => {
     const headers = req.headers;
@@ -25,7 +28,7 @@ const validateUser = async (req, res, next) => {
   }
   // 3. token expiry date should not be passed
   const tokenData = jwt.decode(tokenFromHeaders);
-  console.log(tokenData);
+  // console.log(tokenData);
 
   const tokenExp = tokenData.exp;
   const now = Math.ceil(new Date().getTime() / 1_000);

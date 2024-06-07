@@ -9,7 +9,7 @@ const postSchema = new mongoose.Schema(
     body: {
       type: String,
       required: false,
-      deafult: "Lorem ipsum",
+      default: "Lorem ipsum",
     },
     tags: {
       type: Array,
@@ -19,24 +19,23 @@ const postSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId, // _id data type
       ref: "users", // Connecting collection (posts <-> users)
     },
-    // views: {
-    //   type: Number,
-    // },
-    // comments: [
-    //   {
-    //     _id: false,
-    //     comment: {
-    //       type: String,
-    //     },
-    //     date: {
-    //       type: Date,
-    //       default: new Date(),
-    //     },
-    //     userId: {
-    //       type: mongoose.Schema.Types.ObjectId,
-    //     },
-    //   },
-    // ],
+    views: {
+      type: Number,
+    },
+    comments: [
+      {
+        comment: {
+          type: String,
+        },
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
